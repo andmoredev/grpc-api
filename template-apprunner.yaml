@@ -34,7 +34,7 @@ Resources:
                   - ecr:GetAuthorizationToken
                 Resource:
                   Fn::ImportValue:
-                    Fn::Sub: "${ECRStackName}-ECRRepositoryUrl"
+                    Fn::Sub: "${ECRStackName}-ECRRepositoryArn"
 
   AppRunnerService:
     Type: AWS::AppRunner::Service
