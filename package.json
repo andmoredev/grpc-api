@@ -1,0 +1,9 @@
+{
+  "name": "grpc-app",
+  "version": "1.0.0",
+  "main": "server/index.js",
+  "dependencies": {
+    "@grpc/grpc-js": "^1.8.0",
+    "@grpc/proto-loader": "^0.7.0"
+  }
+}
