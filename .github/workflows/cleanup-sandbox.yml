@@ -11,30 +11,31 @@ concurrency:
   group: ${{ github.workflow }}
 
 jobs:
-  # delete-ecs:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #   - name: Checkout code
-  #     uses: actions/checkout@v4
+  delete-apprunner:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
 
-  #   - name: Configure AWS
-  #     uses: aws-actions/configure-aws-credentials@v4
-  #     with:
-  #       aws-region: ${{ vars.AWS_REGION }}
-  #       role-to-assume: ${{ secrets.PIPELINE_EXECUTION_ROLE }}
-  #       role-session-name: ecs-stack-delete
-  #       role-duration-seconds: 3600
-  #       role-skip-session-tagging: true
+    - name: Configure AWS
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-region: ${{ vars.AWS_REGION }}
+        role-to-assume: ${{ secrets.PIPELINE_EXECUTION_ROLE }}
+        role-session-name: network-stack-delete
+        role-duration-seconds: 3600
+        role-skip-session-tagging: true
 
-  #   - name: Delete Stack
-  #     run: |
-  #       sam delete  \
-  #         --config-file samconfig.yaml \
-  #         --config-env ecs \
-  #         --no-prompts
+    - name: Delete Stack
+      run: |
+        sam delete  \
+          --config-file samconfig.yaml \
+          --config-env apprunner \
+          --no-prompts
+
 
   delete-ecr:
-    # needs: [delete-ecs]
+    needs: [delete-apprunner]
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code
@@ -78,25 +79,3 @@ jobs:
           --config-env ecr \
           --no-prompts
 
-  # delete-network:
-  #   needs: [delete-ecs]
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #   - name: Checkout code
-  #     uses: actions/checkout@v4
-
-  #   - name: Configure AWS
-  #     uses: aws-actions/configure-aws-credentials@v4
-  #     with:
-  #       aws-region: ${{ vars.AWS_REGION }}
-  #       role-to-assume: ${{ secrets.PIPELINE_EXECUTION_ROLE }}
-  #       role-session-name: network-stack-delete
-  #       role-duration-seconds: 3600
-  #       role-skip-session-tagging: true
-
-  #   - name: Delete Stack
-  #     run: |
-  #       sam delete  \
-  #         --config-file samconfig.yaml \
-  #         --config-env network \
-  #         --no-prompts

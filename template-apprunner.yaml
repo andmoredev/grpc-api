@@ -32,9 +32,7 @@ Resources:
                   - ecr:BatchGetImage
                   - ecr:DescribeImages
                   - ecr:GetAuthorizationToken
-                Resource:
-                  Fn::ImportValue:
-                    Fn::Sub: "${ECRStackName}-ECRRepositoryArn"
+                Resource: "*"
 
   AppRunnerService:
     Type: AWS::AppRunner::Service
