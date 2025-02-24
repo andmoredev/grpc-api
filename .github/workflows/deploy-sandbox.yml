@@ -105,7 +105,7 @@ jobs:
       env:
         IMAGE_TAG: ${{ github.sha }}
       run: |
-        docker build --platform linux/amd64 -t $ECR_REPOSITORY_URL:$IMAGE_TAG ./server
+        docker build --platform linux/amd64 -t $ECR_REPOSITORY_URL:$IMAGE_TAG .
         docker push $ECR_REPOSITORY_URL:$IMAGE_TAG
 
         # Also tag as latest
