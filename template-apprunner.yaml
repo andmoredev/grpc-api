@@ -11,11 +11,38 @@ Parameters:
     Description: Docker image tag to deploy
 
 Resources:
+  AppRunnerECRAccessRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: apprunner.amazonaws.com
+            Action: "sts:AssumeRole"
+      Policies:
+        - PolicyName: ECRAccessPolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - ecr:GetDownloadUrlForLayer
+                  - ecr:BatchGetImage
+                  - ecr:DescribeImages
+                  - ecr:GetAuthorizationToken
+                Resource:
+                  Fn::ImportValue:
+                    Fn::Sub: "${ECRStackName}-ECRRepositoryUrl"
+
   AppRunnerService:
     Type: AWS::AppRunner::Service
     Properties:
       ServiceName: GrpcAppRunnerService
       SourceConfiguration:
+        AuthenticationConfiguration:
+          AccessRoleArn: !GetAtt AppRunnerECRAccessRole.Arn
         ImageRepository:
           ImageIdentifier: !Sub
             - "${ECRRepositoryUrl}:${DockerImageTag}"
