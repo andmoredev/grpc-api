@@ -96,7 +96,7 @@ jobs:
     - name: Get ECR Repository from Stack Output
       run: |
         ECR_REPOSITORY_URL=$(aws cloudformation describe-stacks \
-        --stack-name udp-api-ecr \
+        --stack-name grpc-api-ecr \
         --query 'Stacks[0].Outputs[?OutputKey==`ECRRepositoryUrl`].OutputValue' \
         --output text)
         echo "ECR_REPOSITORY_URL=$ECR_REPOSITORY_URL" >> $GITHUB_ENV
@@ -105,7 +105,7 @@ jobs:
       env:
         IMAGE_TAG: ${{ github.sha }}
       run: |
-        docker build --platform linux/amd64 -t $ECR_REPOSITORY_URL:$IMAGE_TAG ./hello-world-app-udp
+        docker build --platform linux/amd64 -t $ECR_REPOSITORY_URL:$IMAGE_TAG ./server
         docker push $ECR_REPOSITORY_URL:$IMAGE_TAG
 
         # Also tag as latest
@@ -113,33 +113,33 @@ jobs:
 
         docker push $ECR_REPOSITORY_URL:latest
 
-  deploy-ecs:
-    needs: [build-and-publish-image]
-    runs-on: ubuntu-latest
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+  # deploy-ecs:
+  #   needs: [build-and-publish-image]
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #   - name: Checkout code
+  #     uses: actions/checkout@v4
 
-    - name: Configure AWS
-      uses: aws-actions/configure-aws-credentials@v4
-      with:
-        aws-region: ${{ vars.AWS_REGION }}
-        role-to-assume: ${{ secrets.PIPELINE_EXECUTION_ROLE }}
-        role-session-name: ecs-repo-deploy
-        role-duration-seconds: 3600
-        role-skip-session-tagging: true
+  #   - name: Configure AWS
+  #     uses: aws-actions/configure-aws-credentials@v4
+  #     with:
+  #       aws-region: ${{ vars.AWS_REGION }}
+  #       role-to-assume: ${{ secrets.PIPELINE_EXECUTION_ROLE }}
+  #       role-session-name: ecs-repo-deploy
+  #       role-duration-seconds: 3600
+  #       role-skip-session-tagging: true
 
-    - name: Build and deploy ECS template
-      run: |
-        sam build  \
-          --template template-ecs.yaml \
-          --config-file samconfig.yaml \
-          --config-env ecs
+  #   - name: Build and deploy ECS template
+  #     run: |
+  #       sam build  \
+  #         --template template-ecs.yaml \
+  #         --config-file samconfig.yaml \
+  #         --config-env ecs
 
-        sam deploy \
-          --template template-ecs.yaml \
-          --config-file samconfig.yaml \
-          --config-env ecs \
-          --s3-bucket ${{ secrets.ARTIFACTS_BUCKET_NAME }} \
-          --no-fail-on-empty-changeset \
-          --role-arn ${{ secrets.CLOUDFORMATION_EXECUTION_ROLE }}
+  #       sam deploy \
+  #         --template template-ecs.yaml \
+  #         --config-file samconfig.yaml \
+  #         --config-env ecs \
+  #         --s3-bucket ${{ secrets.ARTIFACTS_BUCKET_NAME }} \
+  #         --no-fail-on-empty-changeset \
+  #         --role-arn ${{ secrets.CLOUDFORMATION_EXECUTION_ROLE }}

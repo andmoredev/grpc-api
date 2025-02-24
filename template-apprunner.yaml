@@ -1,6 +1,15 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 
+Parameters:
+  ECRStackName:
+    Type: String
+    Description: AWS CloudFormation stack name of the ECRStack
+  DockerImageTag:
+    Type: String
+    Default: latest
+    Description: Docker image tag to deploy
+
 Resources:
   AppRunnerService:
     Type: AWS::AppRunner::Service
@@ -8,13 +17,16 @@ Resources:
       ServiceName: GrpcAppRunnerService
       SourceConfiguration:
         ImageRepository:
-          ImageIdentifier: "<your-account-id>.dkr.ecr.<region>.amazonaws.com/grpc-app:latest"
+          ImageIdentifier: !Sub
+            - "${ECRRepositoryUrl}:${DockerImageTag}"
+            - ECRRepositoryUrl:
+                Fn::ImportValue:
+                  Fn::Sub: "${ECRStackName}-ECRRepositoryUrl"
           ImageRepositoryType: ECR
         AutoDeploymentsEnabled: true
       InstanceConfiguration:
         Cpu: '1 vCPU'
         Memory: '2 GB'
-        Port: 50051
       HealthCheckConfiguration:
         Protocol: TCP
         Interval: 10
