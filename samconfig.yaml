@@ -27,7 +27,7 @@ network:
       region: us-east-1
       capabilities: CAPABILITY_IAM
 
-ecs:
+apprunner:
   build:
     parameters:
       cached: 'true'
@@ -35,11 +35,10 @@ ecs:
 
   deploy:
     parameters:
-      stack_name: grpc-api-ecs
-      s3_prefix: grpc-api-ecs
+      stack_name: grpc-api-apprunner
+      s3_prefix: grpc-api-apprunner
       region: us-east-1
       capabilities: CAPABILITY_IAM
       parameter_overrides:
-        - "NetworkStackName=grpc-api-networking"
         - "ECRStackName=grpc-api-ecr"
         - "DockerImageTag=latest"
