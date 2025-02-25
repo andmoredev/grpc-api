@@ -14,10 +14,10 @@ RUN npm install
 COPY . .
 
 # Expose gRPC port
-EXPOSE 50051
+EXPOSE 443
 
 # Set environment variable for port (App Runner will use this)
-ENV PORT=50051
+ENV PORT=443
 
 # Start the gRPC server
 CMD ["node", "server/index.js"]
