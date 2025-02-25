@@ -8,6 +8,9 @@ const helloProto = grpc.loadPackageDefinition(packageDefinition).hello;
 
 function sayHello(call, callback) {
     const name = call.request.name;
+
+    console.log(`calling gRPC server`);
+
     callback(null, { message: `Hello, ${name}!` });
 }
 

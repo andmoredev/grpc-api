@@ -13,15 +13,15 @@ Resources:
       ImageScanningConfiguration:
         ScanOnPush: true
       ImageTagMutability: MUTABLE
-      RepositoryPolicyText:
-        Version: "2012-10-17"
-        Statement:
-          - Effect: Allow
-            Principal:
-              Service: apprunner.amazonaws.com
-            Action:
-              - ecr:BatchGetImage
-              - ecr:GetDownloadUrlForLayer
+      # RepositoryPolicyText:
+      #   Version: "2012-10-17"
+      #   Statement:
+      #     - Effect: Allow
+      #       Principal:
+      #         Service: apprunner.amazonaws.com
+      #       Action:
+      #         - ecr:BatchGetImage
+      #         - ecr:GetDownloadUrlForLayer
 
 Outputs:
   ECRRepositoryUrl:
