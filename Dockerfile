@@ -13,11 +13,11 @@ RUN npm install
 # Copy application files
 COPY . .
 
-# Expose gRPC port
-EXPOSE 50051
+# Expose gRPC and Health Check ports
+EXPOSE 50051 8080
 
 # Set environment variable for port (App Runner will use this)
-ENV PORT=50051
+ENV PORT=50051 HEALTH_PORT=8080
 
 # Start the gRPC server
 CMD ["node", "server/index.js"]

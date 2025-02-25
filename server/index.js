@@ -1,6 +1,7 @@
 const grpc = require('@grpc/grpc-js');
 const protoLoader = require('@grpc/proto-loader');
 const path = require('path');
+const http = require('http');
 
 // Load proto file
 const PROTO_PATH = path.resolve(__dirname, '../proto/hello.proto');
@@ -11,75 +12,55 @@ const packageDefinition = protoLoader.loadSync(PROTO_PATH, {
   defaults: true,
   oneofs: true
 });
-
 const helloProto = grpc.loadPackageDefinition(packageDefinition).hello;
 
-// Implement service methods
+// gRPC service implementation
 function sayHello(call, callback) {
   const name = call.request.name || 'World';
-  console.log(`gRPC request received: sayHello for ${name}`);
+  console.log(`📞 gRPC request received: sayHello for ${name}`);
   callback(null, { message: `Hello, ${name}!` });
 }
 
-// Health check implementation (useful for container health checks)
+// Health check for gRPC
 function checkHealth(call, callback) {
   callback(null, { status: 'SERVING' });
 }
 
-function main() {
+// Create gRPC server
+function startGrpcServer() {
   const server = new grpc.Server();
+  server.addService(helloProto.Greeter.service, { SayHello: sayHello });
 
-  // Add your main service
-  console.log('Adding service:', helloProto.Greeter.service);
-  server.addService(helloProto.Greeter.service, {
-    SayHello: sayHello
-  });
-
-  // Add health check service if defined in your proto
-  // If not defined in your proto, you can skip this part
-  if (helloProto.Health && helloProto.Health.service) {
-    server.addService(helloProto.Health.service, {
-      Check: checkHealth
-    });
-  }
-
-  // Get port from environment variable (for App Runner compatibility)
   const PORT = process.env.PORT || 50051;
-
-  // Bind to all interfaces (0.0.0.0) for container networking
-  server.bindAsync(`0.0.0.0:${PORT}`, grpc.ServerCredentials.createInsecure(),
-    (error, port) => {
-      if (error) {
-        console.error('Failed to start gRPC server:', error);
-        process.exit(1);
-      }
-      console.log(`🚀 gRPC Server running on port ${PORT}`);
-
-      console.log('Proto path:', PROTO_PATH);
-      console.log('Proto services:', Object.keys(helloProto));
-
-      server.start();
-
-      // Handle graceful shutdown
-      const signals = ['SIGINT', 'SIGTERM'];
-      signals.forEach(signal => {
-        process.on(signal, () => {
-          console.log(`Received ${signal}, shutting down gRPC server...`);
-          server.tryShutdown(() => {
-            console.log('Server shutdown complete');
-            process.exit(0);
-          });
-
-          // Force shutdown after 5 seconds if graceful shutdown fails
-          setTimeout(() => {
-            console.log('Forcing server shutdown after timeout');
-            process.exit(1);
-          }, 5000);
-        });
-      });
+  server.bindAsync(`0.0.0.0:${PORT}`, grpc.ServerCredentials.createInsecure(), (err, port) => {
+    if (err) {
+      console.error('❌ Failed to start gRPC server:', err);
+      process.exit(1);
     }
-  );
+    console.log(`🚀 gRPC Server running on port ${port}`);
+    server.start();
+  });
 }
 
-main();
+// Create HTTP health check endpoint
+function startHealthCheckServer() {
+  const healthPort = process.env.HEALTH_PORT || 8080;
 
+  const server = http.createServer((req, res) => {
+    if (req.url === '/health' && req.method === 'GET') {
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ status: 'healthy' }));
+    } else {
+      res.writeHead(404);
+      res.end();
+    }
+  });
+
+  server.listen(healthPort, '0.0.0.0', () => {
+    console.log(`✅ Health check endpoint running on port ${healthPort}`);
+  });
+}
+
+// Start both gRPC and HTTP servers
+startGrpcServer();
+startHealthCheckServer();
