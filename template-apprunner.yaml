@@ -32,6 +32,7 @@ Resources:
                   - ecr:BatchGetImage
                   - ecr:DescribeImages
                   - ecr:GetAuthorizationToken
+                  - ecr:BatchCheckLayerAvailability
                 Resource: "*"
 
   AppRunnerService:
