@@ -27,19 +27,6 @@ network:
       region: us-east-1
       capabilities: CAPABILITY_IAM
 
-network:
-  build:
-    parameters:
-      cached: 'true'
-      parallel: 'true'
-
-  deploy:
-    parameters:
-      stack_name: grpc-api-networking
-      s3_prefix: grpc-api-networking
-      region: us-east-1
-      capabilities: CAPABILITY_IAM
-
 ecs:
   build:
     parameters:
