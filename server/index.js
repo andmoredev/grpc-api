@@ -30,6 +30,7 @@ function main() {
   const server = new grpc.Server();
 
   // Add your main service
+  console.log('Adding service:', helloProto.Greeter.service);
   server.addService(helloProto.Greeter.service, {
     SayHello: sayHello
   });
@@ -46,15 +47,17 @@ function main() {
   const PORT = process.env.PORT || 50051;
 
   // Bind to all interfaces (0.0.0.0) for container networking
-  server.bindAsync(
-    `0.0.0.0:${PORT}`,
-    grpc.ServerCredentials.createInsecure(),
+  server.bindAsync(`0.0.0.0:${PORT}`, grpc.ServerCredentials.createInsecure(),
     (error, port) => {
       if (error) {
         console.error('Failed to start gRPC server:', error);
         process.exit(1);
       }
       console.log(`🚀 gRPC Server running on port ${PORT}`);
+
+      console.log('Proto path:', PROTO_PATH);
+      console.log('Proto services:', Object.keys(helloProto));
+
       server.start();
 
       // Handle graceful shutdown
