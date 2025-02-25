@@ -49,8 +49,8 @@ Resources:
                 Fn::ImportValue:
                   Fn::Sub: "${ECRStackName}-ECRRepositoryUrl"
           ImageRepositoryType: ECR
-          # ImageConfiguration:
-          #   Port: 50051
+          ImageConfiguration:
+            Port: 50051
         AutoDeploymentsEnabled: true
       InstanceConfiguration:
         Cpu: '1 vCPU'

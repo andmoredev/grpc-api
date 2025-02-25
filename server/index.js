@@ -44,7 +44,7 @@ function main() {
   }
 
   // Get port from environment variable (for App Runner compatibility)
-  const PORT = process.env.PORT || 443;
+  const PORT = process.env.PORT || 50051;
 
   // Bind to all interfaces (0.0.0.0) for container networking
   server.bindAsync(`0.0.0.0:${PORT}`, grpc.ServerCredentials.createInsecure(),

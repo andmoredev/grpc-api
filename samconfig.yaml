@@ -27,6 +27,37 @@ network:
       region: us-east-1
       capabilities: CAPABILITY_IAM
 
+network:
+  build:
+    parameters:
+      cached: 'true'
+      parallel: 'true'
+
+  deploy:
+    parameters:
+      stack_name: grpc-api-networking
+      s3_prefix: grpc-api-networking
+      region: us-east-1
+      capabilities: CAPABILITY_IAM
+
+ecs:
+  build:
+    parameters:
+      cached: 'true'
+      parallel: 'true'
+
+  deploy:
+    parameters:
+      stack_name: grpc-api-ecs
+      s3_prefix: grpc-api-ecs
+      region: us-east-1
+      capabilities: CAPABILITY_IAM
+      parameter_overrides:
+        - "NetworkStackName=grpc-api-networking"
+        - "ECRStackName=grpc-api-ecr"
+        - "DockerImageTag=latest"
+
+
 apprunner:
   build:
     parameters:

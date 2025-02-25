@@ -42,39 +42,38 @@ jobs:
           --no-fail-on-empty-changeset \
           --role-arn ${{ secrets.CLOUDFORMATION_EXECUTION_ROLE }}
 
-  # deploy-network:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #   - name: Checkout code
-  #     uses: actions/checkout@v4
+  deploy-network:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
 
-  #   - name: Configure AWS
-  #     uses: aws-actions/configure-aws-credentials@v4
-  #     with:
-  #       aws-region: ${{ vars.AWS_REGION }}
-  #       role-to-assume: ${{ secrets.PIPELINE_EXECUTION_ROLE }}
-  #       role-session-name: network-repo-deploy
-  #       role-duration-seconds: 3600
-  #       role-skip-session-tagging: true
+    - name: Configure AWS
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-region: ${{ vars.AWS_REGION }}
+        role-to-assume: ${{ secrets.PIPELINE_EXECUTION_ROLE }}
+        role-session-name: network-repo-deploy
+        role-duration-seconds: 3600
+        role-skip-session-tagging: true
 
-  #   - name: Build and deploy Network template
-  #     run: |
-  #       sam build  \
-  #         --template template-network.yaml \
-  #         --config-file samconfig.yaml \
-  #         --config-env network
+    - name: Build and deploy Network template
+      run: |
+        sam build  \
+          --template template-network.yaml \
+          --config-file samconfig.yaml \
+          --config-env network
 
-  #       sam deploy \
-  #         --template template-network.yaml \
-  #         --config-file samconfig.yaml \
-  #         --config-env network \
-  #         --s3-bucket ${{ secrets.ARTIFACTS_BUCKET_NAME }} \
-  #         --no-fail-on-empty-changeset \
-  #         --role-arn ${{ secrets.CLOUDFORMATION_EXECUTION_ROLE }}
+        sam deploy \
+          --template template-network.yaml \
+          --config-file samconfig.yaml \
+          --config-env network \
+          --s3-bucket ${{ secrets.ARTIFACTS_BUCKET_NAME }} \
+          --no-fail-on-empty-changeset \
+          --role-arn ${{ secrets.CLOUDFORMATION_EXECUTION_ROLE }}
 
   build-and-publish-image:
-    # needs: [deploy-ecr, deploy-network]
-    needs: [deploy-ecr]
+    needs: [deploy-ecr, deploy-network]
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code
@@ -113,7 +112,7 @@ jobs:
 
         docker push $ECR_REPOSITORY_URL:latest
 
-  deploy-apprunner:
+  deploy-ecs:
     needs: [build-and-publish-image]
     runs-on: ubuntu-latest
     steps:
@@ -125,21 +124,52 @@ jobs:
       with:
         aws-region: ${{ vars.AWS_REGION }}
         role-to-assume: ${{ secrets.PIPELINE_EXECUTION_ROLE }}
-        role-session-name: apprunner-deploy
+        role-session-name: ecs-repo-deploy
         role-duration-seconds: 3600
         role-skip-session-tagging: true
 
-    - name: Build and deploy AppRunner template
+    - name: Build and deploy ECS template
       run: |
         sam build  \
-          --template template-apprunner.yaml \
+          --template template-ecs.yaml \
           --config-file samconfig.yaml \
-          --config-env apprunner
+          --config-env ecs
 
         sam deploy \
-          --template template-apprunner.yaml \
+          --template template-ecs.yaml \
           --config-file samconfig.yaml \
-          --config-env apprunner \
+          --config-env ecs \
           --s3-bucket ${{ secrets.ARTIFACTS_BUCKET_NAME }} \
           --no-fail-on-empty-changeset \
           --role-arn ${{ secrets.CLOUDFORMATION_EXECUTION_ROLE }}
+
+  # deploy-apprunner:
+  #   needs: [build-and-publish-image]
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #   - name: Checkout code
+  #     uses: actions/checkout@v4
+
+  #   - name: Configure AWS
+  #     uses: aws-actions/configure-aws-credentials@v4
+  #     with:
+  #       aws-region: ${{ vars.AWS_REGION }}
+  #       role-to-assume: ${{ secrets.PIPELINE_EXECUTION_ROLE }}
+  #       role-session-name: apprunner-deploy
+  #       role-duration-seconds: 3600
+  #       role-skip-session-tagging: true
+
+  #   - name: Build and deploy AppRunner template
+  #     run: |
+  #       sam build  \
+  #         --template template-apprunner.yaml \
+  #         --config-file samconfig.yaml \
+  #         --config-env apprunner
+
+  #       sam deploy \
+  #         --template template-apprunner.yaml \
+  #         --config-file samconfig.yaml \
+  #         --config-env apprunner \
+  #         --s3-bucket ${{ secrets.ARTIFACTS_BUCKET_NAME }} \
+  #         --no-fail-on-empty-changeset \
+  #         --role-arn ${{ secrets.CLOUDFORMATION_EXECUTION_ROLE }}
