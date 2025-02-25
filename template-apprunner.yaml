@@ -49,16 +49,22 @@ Resources:
                 Fn::ImportValue:
                   Fn::Sub: "${ECRStackName}-ECRRepositoryUrl"
           ImageRepositoryType: ECR
+          ImageConfiguration:
+            Port: 50051
         AutoDeploymentsEnabled: true
       InstanceConfiguration:
         Cpu: '1 vCPU'
         Memory: '2 GB'
       HealthCheckConfiguration:
         Protocol: TCP
-        Interval: 10
-        Timeout: 5
-        HealthyThreshold: 3
-        UnhealthyThreshold: 3
+        Path: /
+        Interval: 5
+        Timeout: 2
+        HealthyThreshold: 1
+        UnhealthyThreshold: 5
+      NetworkConfiguration:
+        EgressConfiguration:
+          EgressType: DEFAULT
 
 Outputs:
   AppRunnerServiceUrl:
