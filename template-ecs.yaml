@@ -3,9 +3,9 @@ Transform: AWS::Serverless-2016-10-31
 Description: Hello World UDP application
 
 Parameters:
-  # NetworkStackName:
-  #   Type: String
-  #   Description: AWS CloudFormation stack name of the NetworkStack
+  NetworkStackName:
+    Type: String
+    Description: AWS CloudFormation stack name of the NetworkStack
   ECRStackName:
     Type: String
     Description: AWS CloudFormation stack name of the ECRStack
@@ -60,7 +60,7 @@ Resources:
               awslogs-region: !Ref AWS::Region
               awslogs-stream-prefix: ecs
 
-  HelloWorldService:
+  gRPCService:
     Type: AWS::ECS::Service
     Properties:
       ServiceName: ecs-service
@@ -68,23 +68,23 @@ Resources:
       TaskDefinition: !Ref ECSTaskDefinition
       DesiredCount: 1
       LaunchType: FARGATE
-      # LoadBalancers:
-      #   - ContainerName: ecs-grpc-container
-      #     ContainerPort: 53
-      #     TargetGroupArn:
-      #       Fn::ImportValue:
-      #         Fn::Sub: "${NetworkStackName}-network-TargetGroupArn"
-      # NetworkConfiguration:
-      #   AwsvpcConfiguration:
-      #     AssignPublicIp: ENABLED
-      #     SecurityGroups:
-      #       - Fn::ImportValue:
-      #           Fn::Sub: "${NetworkStackName}-network-SecurityGroupId"
-      #     Subnets:
-      #       - Fn::ImportValue:
-      #           Fn::Sub: "${NetworkStackName}-network-PublicSubnet1Id"
-      #       - Fn::ImportValue:
-      #           Fn::Sub: "${NetworkStackName}-network-PublicSubnet2Id"
+      LoadBalancers:
+        - ContainerName: ecs-grpc-container
+          ContainerPort: 53
+          TargetGroupArn:
+            Fn::ImportValue:
+              Fn::Sub: "${NetworkStackName}-network-TargetGroupArn"
+      NetworkConfiguration:
+        AwsvpcConfiguration:
+          AssignPublicIp: ENABLED
+          SecurityGroups:
+            - Fn::ImportValue:
+                Fn::Sub: "${NetworkStackName}-network-SecurityGroupId"
+          Subnets:
+            - Fn::ImportValue:
+                Fn::Sub: "${NetworkStackName}-network-PublicSubnet1Id"
+            - Fn::ImportValue:
+                Fn::Sub: "${NetworkStackName}-network-PublicSubnet2Id"
 
   ECSTaskExecutionRole:
     Type: AWS::IAM::Role
@@ -112,8 +112,8 @@ Resources:
                 Resource: '*'
 
 Outputs:
-  # ServiceUrl:
-  #   Description: URL of the service
-  #   Value:
-  #     Fn::ImportValue:
-  #       Fn::Sub: "${NetworkStackName}-network-LoadBalancerDNS"
+  ServiceUrl:
+    Description: URL of the service
+    Value:
+      Fn::ImportValue:
+        Fn::Sub: "${NetworkStackName}-network-LoadBalancerDNS"
