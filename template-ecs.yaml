@@ -1,0 +1,119 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Hello World UDP application
+
+Parameters:
+  # NetworkStackName:
+  #   Type: String
+  #   Description: AWS CloudFormation stack name of the NetworkStack
+  ECRStackName:
+    Type: String
+    Description: AWS CloudFormation stack name of the ECRStack
+  DockerImageTag:
+    Type: String
+    Default: latest
+    Description: Docker image tag to deploy
+
+Resources:
+  ApiLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: /ecs/ecs-grpc
+      RetentionInDays: 7
+
+  ECSCluster:
+    Type: AWS::ECS::Cluster
+    Properties:
+      ClusterName: udp-api-cluster
+      CapacityProviders:
+        - FARGATE
+      DefaultCapacityProviderStrategy:
+        - CapacityProvider: FARGATE
+          Weight: 1
+
+  ECSTaskDefinition:
+    Type: AWS::ECS::TaskDefinition
+    Properties:
+      Family: ecs-task
+      RequiresCompatibilities:
+        - FARGATE
+      NetworkMode: awsvpc
+      Cpu: 256
+      Memory: 512
+      ExecutionRoleArn: !GetAtt ECSTaskExecutionRole.Arn
+      ContainerDefinitions:
+        - Name: ecs-grpc-container
+          MemoryReservation: 128
+          Image: !Sub
+            - "${ECRRepositoryUrl}:${DockerImageTag}"
+            - ECRRepositoryUrl:
+                Fn::ImportValue:
+                  Fn::Sub: "${ECRStackName}-ECRRepositoryUrl"
+          Essential: true
+          PortMappings:
+            - ContainerPort: 50051
+              Protocol: tcp
+          LogConfiguration:
+            LogDriver: awslogs
+            Options:
+              awslogs-group: !Ref ApiLogGroup
+              awslogs-region: !Ref AWS::Region
+              awslogs-stream-prefix: ecs
+
+  HelloWorldService:
+    Type: AWS::ECS::Service
+    Properties:
+      ServiceName: ecs-service
+      Cluster: !Ref ECSCluster
+      TaskDefinition: !Ref ECSTaskDefinition
+      DesiredCount: 1
+      LaunchType: FARGATE
+      # LoadBalancers:
+      #   - ContainerName: ecs-grpc-container
+      #     ContainerPort: 53
+      #     TargetGroupArn:
+      #       Fn::ImportValue:
+      #         Fn::Sub: "${NetworkStackName}-network-TargetGroupArn"
+      # NetworkConfiguration:
+      #   AwsvpcConfiguration:
+      #     AssignPublicIp: ENABLED
+      #     SecurityGroups:
+      #       - Fn::ImportValue:
+      #           Fn::Sub: "${NetworkStackName}-network-SecurityGroupId"
+      #     Subnets:
+      #       - Fn::ImportValue:
+      #           Fn::Sub: "${NetworkStackName}-network-PublicSubnet1Id"
+      #       - Fn::ImportValue:
+      #           Fn::Sub: "${NetworkStackName}-network-PublicSubnet2Id"
+
+  ECSTaskExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ecs-tasks.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
+      Policies:
+        - PolicyName: ECRAccess
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - ecr:GetAuthorizationToken
+                  - ecr:BatchCheckLayerAvailability
+                  - ecr:GetDownloadUrlForLayer
+                  - ecr:BatchGetImage
+                Resource: '*'
+
+Outputs:
+  # ServiceUrl:
+  #   Description: URL of the service
+  #   Value:
+  #     Fn::ImportValue:
+  #       Fn::Sub: "${NetworkStackName}-network-LoadBalancerDNS"

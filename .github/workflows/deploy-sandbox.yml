@@ -105,7 +105,7 @@ jobs:
       env:
         IMAGE_TAG: ${{ github.sha }}
       run: |
-        docker build --platform linux/amd64 -t $ECR_REPOSITORY_URL:$IMAGE_TAG ./hello-world-app-udp
+        docker build --platform linux/amd64 -t $ECR_REPOSITORY_URL:$IMAGE_TAG ./grpc-service
         docker push $ECR_REPOSITORY_URL:$IMAGE_TAG
 
         # Also tag as latest
