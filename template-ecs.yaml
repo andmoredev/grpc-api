@@ -53,6 +53,8 @@ Resources:
           PortMappings:
             - ContainerPort: 50051
               Protocol: tcp
+            - ContainerPort: 8080
+              Protocol: tcp
           LogConfiguration:
             LogDriver: awslogs
             Options:
@@ -68,12 +70,12 @@ Resources:
       TaskDefinition: !Ref ECSTaskDefinition
       DesiredCount: 1
       LaunchType: FARGATE
-      # LoadBalancers:
-      #   - ContainerName: ecs-grpc-container
-      #     ContainerPort: 53
-      #     TargetGroupArn:
-      #       Fn::ImportValue:
-      #         Fn::Sub: "${NetworkStackName}-network-TargetGroupArn"
+      LoadBalancers:
+        - ContainerName: ecs-grpc-container
+          ContainerPort: 50051
+          TargetGroupArn:
+            Fn::ImportValue:
+              Fn::Sub: "${NetworkStackName}-network-TargetGroupArn"
       NetworkConfiguration:
         AwsvpcConfiguration:
           AssignPublicIp: ENABLED
