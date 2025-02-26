@@ -4,7 +4,7 @@ const path = require('path');
 const http = require('http');
 
 // Load proto file
-const PROTO_PATH = path.resolve(__dirname, '../proto/hello.proto');
+const PROTO_PATH = path.resolve(__dirname, './proto/hello.proto');
 const packageDefinition = protoLoader.loadSync(PROTO_PATH, {
   keepCase: true,
   longs: String,
@@ -18,7 +18,7 @@ const helloProto = grpc.loadPackageDefinition(packageDefinition).hello;
 function sayHello(call, callback) {
   const name = call.request.name || 'World';
   console.log(`📞 gRPC request received: sayHello for ${name}`);
-  callback(null, { message: `Hello, ${name}!` });
+  callback(null, { message: `Hello, ${name}! booyah` });
 }
 
 // Health check for gRPC

@@ -13,15 +13,6 @@ Resources:
       ImageScanningConfiguration:
         ScanOnPush: true
       ImageTagMutability: MUTABLE
-      # RepositoryPolicyText:
-      #   Version: "2012-10-17"
-      #   Statement:
-      #     - Effect: Allow
-      #       Principal:
-      #         Service: apprunner.amazonaws.com
-      #       Action:
-      #         - ecr:BatchGetImage
-      #         - ecr:GetDownloadUrlForLayer
 
 Outputs:
   ECRRepositoryUrl:
@@ -29,12 +20,6 @@ Outputs:
     Value: !GetAtt ECRRepository.RepositoryUri
     Export:
       Name: !Sub '${AWS::StackName}-ECRRepositoryUrl'
-
-  ECRRepositoryArn:
-    Description: URL of the ECR Repository
-    Value: !GetAtt ECRRepository.Arn
-    Export:
-      Name: !Sub '${AWS::StackName}-ECRRepositoryArn'
 
   ECRRepositoryName:
     Description: Name of the ECR Repository

@@ -1,23 +1,18 @@
-# Use Node.js LTS as the base image
-FROM node:20
+# Use Node.js 22 base image
+FROM node:22
 
-# Set the working directory
+# Set working directory
 WORKDIR /app
 
-# Copy package files first to leverage Docker caching
+# Copy package files and install dependencies
 COPY package*.json ./
-
-# Install dependencies
 RUN npm install
 
-# Copy application files
+# Copy the entire project
 COPY . .
 
-# Expose gRPC and Health Check ports
-EXPOSE 50051 8080
+# Expose the gRPC port
+EXPOSE 50051
 
-# Set environment variable for port (App Runner will use this)
-ENV PORT=50051 HEALTH_PORT=8080
-
-# Start the gRPC server
-CMD ["node", "server/index.js"]
+# Run the server
+CMD ["node", "server.js"]

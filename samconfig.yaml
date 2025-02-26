@@ -7,12 +7,12 @@ ecr:
 
   deploy:
     parameters:
-      stack_name: grpc-api-ecr
-      s3_prefix: grpc-api-ecr
+      stack_name: grpc-service-ecr
+      s3_prefix: grpc-service-ecr
       region: us-east-1
       capabilities: CAPABILITY_IAM
       parameter_overrides:
-        - "RepositoryName=grpc-api"
+        - "RepositoryName=grpc-service-repo"
 
 network:
   build:
@@ -22,8 +22,8 @@ network:
 
   deploy:
     parameters:
-      stack_name: grpc-api-networking
-      s3_prefix: grpc-api-networking
+      stack_name: grpc-service-networking
+      s3_prefix: grpc-service-networking
       region: us-east-1
       capabilities: CAPABILITY_IAM
 
@@ -35,28 +35,11 @@ ecs:
 
   deploy:
     parameters:
-      stack_name: grpc-api-ecs
-      s3_prefix: grpc-api-ecs
+      stack_name: grpc-service-ecs
+      s3_prefix: grpc-service-ecs
       region: us-east-1
       capabilities: CAPABILITY_IAM
       parameter_overrides:
-        - "NetworkStackName=grpc-api-networking"
-        - "ECRStackName=grpc-api-ecr"
-        - "DockerImageTag=latest"
-
-
-apprunner:
-  build:
-    parameters:
-      cached: 'true'
-      parallel: 'true'
-
-  deploy:
-    parameters:
-      stack_name: grpc-api-apprunner
-      s3_prefix: grpc-api-apprunner
-      region: us-east-1
-      capabilities: CAPABILITY_IAM
-      parameter_overrides:
-        - "ECRStackName=grpc-api-ecr"
+        - "NetworkStackName=grpc-service-networking"
+        - "ECRStackName=grpc-service-ecr"
         - "DockerImageTag=latest"
