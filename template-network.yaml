@@ -16,14 +16,13 @@ Resources:
       GroupDescription: Security group for Hello World ECS task
       VpcId: !Ref VPC
       SecurityGroupIngress:
-        - IpProtocol: udp
-          FromPort: 53
-          ToPort: 53
-          CidrIp: 0.0.0.0/0
         - IpProtocol: tcp
-          FromPort: 53
-          ToPort: 53
+          FromPort: 50051
+          ToPort: 50051
           CidrIp: 0.0.0.0/0
+      SecurityGroupEgress:
+        - IpProtocol: "-1"
+          CidrIp: "0.0.0.0/0"
 
   PublicSubnet1:
     Type: AWS::EC2::Subnet

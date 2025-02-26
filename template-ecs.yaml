@@ -24,7 +24,7 @@ Resources:
   ECSCluster:
     Type: AWS::ECS::Cluster
     Properties:
-      ClusterName: udp-api-cluster
+      ClusterName: grpc-service-cluster
       CapacityProviders:
         - FARGATE
       DefaultCapacityProviderStrategy:
