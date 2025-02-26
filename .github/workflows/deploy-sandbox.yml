@@ -96,7 +96,7 @@ jobs:
     - name: Get ECR Repository from Stack Output
       run: |
         ECR_REPOSITORY_URL=$(aws cloudformation describe-stacks \
-        --stack-name udp-api-ecr \
+        --stack-name grpc-service-ecr \
         --query 'Stacks[0].Outputs[?OutputKey==`ECRRepositoryUrl`].OutputValue' \
         --output text)
         echo "ECR_REPOSITORY_URL=$ECR_REPOSITORY_URL" >> $GITHUB_ENV
