@@ -113,11 +113,22 @@ Resources:
     Type: AWS::ElasticLoadBalancingV2::Listener
     Properties:
       LoadBalancerArn: !Ref ApplicationLoadBalancer
-      Protocol: HTTP
+      Protocol: HTTPS
       Port: 50051
+      Certificates:
+        - CertificateArn: !Ref SSLCertificate
       DefaultActions:
         - Type: forward
           TargetGroupArn: !Ref TargetGroup
+
+  SSLCertificate:
+    Type: AWS::CertificateManager::Certificate
+    Properties:
+      DomainName: "andmore.dev"
+      ValidationMethod: DNS
+      DomainValidationOptions:
+        - DomainName: "andmore.dev"
+          HostedZoneId: "Z020200715W60ZNJPKBWE"
 
 Outputs:
   VpcId:
