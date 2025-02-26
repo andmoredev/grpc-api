@@ -111,9 +111,9 @@ Resources:
                   - ecr:BatchGetImage
                 Resource: '*'
 
-Outputs:
-  ServiceUrl:
-    Description: URL of the service
-    Value:
-      Fn::ImportValue:
-        Fn::Sub: "${NetworkStackName}-network-LoadBalancerDNS"
+# Outputs:
+#   ServiceUrl:
+#     Description: URL of the service
+#     Value:
+#       Fn::ImportValue:
+#         Fn::Sub: "${NetworkStackName}-network-LoadBalancerDNS"
