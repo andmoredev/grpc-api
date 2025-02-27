@@ -10,16 +10,16 @@ Resources:
       EnableDnsHostnames: true
       EnableDnsSupport: true
 
-  ALBSecurityGroup:
-    Type: AWS::EC2::SecurityGroup
-    Properties:
-      GroupDescription: "Security group for ALB"
-      VpcId: !Ref VPC
-      SecurityGroupIngress:
-        - IpProtocol: tcp
-          FromPort: 50051
-          ToPort: 50051
-          CidrIp: 0.0.0.0/0
+  # ALBSecurityGroup:
+  #   Type: AWS::EC2::SecurityGroup
+  #   Properties:
+  #     GroupDescription: "Security group for ALB"
+  #     VpcId: !Ref VPC
+  #     SecurityGroupIngress:
+  #       - IpProtocol: tcp
+  #         FromPort: 50051
+  #         ToPort: 50051
+  #         CidrIp: 0.0.0.0/0
 
   ECSSecurityGroup:
     Type: AWS::EC2::SecurityGroup
@@ -30,10 +30,10 @@ Resources:
         - IpProtocol: tcp
           FromPort: 50051
           ToPort: 50051
-          SourceSecurityGroupId: !Ref ALBSecurityGroup
-      # SecurityGroupEgress:
-      #   - IpProtocol: "-1"
-      #     CidrIp: "0.0.0.0/0"
+          CidrIp: 0.0.0.0/0
+      SecurityGroupEgress:
+        - IpProtocol: "-1"
+          CidrIp: 0.0.0.0/0
 
   PublicSubnet1:
     Type: AWS::EC2::Subnet
