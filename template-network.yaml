@@ -85,50 +85,50 @@ Resources:
       SubnetId: !Ref PublicSubnet2
       RouteTableId: !Ref PublicRouteTable
 
-  ApplicationLoadBalancer:
-    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
-    Properties:
-      Name: grpc-alb
-      Subnets:
-        - !Ref PublicSubnet1
-        - !Ref PublicSubnet2
-      SecurityGroups:
-        - !Ref ALBSecurityGroup
-      Scheme: internet-facing
-      Type: application
+  # ApplicationLoadBalancer:
+  #   Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+  #   Properties:
+  #     Name: grpc-alb
+  #     Subnets:
+  #       - !Ref PublicSubnet1
+  #       - !Ref PublicSubnet2
+  #     SecurityGroups:
+  #       - !Ref ALBSecurityGroup
+  #     Scheme: internet-facing
+  #     Type: application
 
-  TargetGroup:
-    Type: AWS::ElasticLoadBalancingV2::TargetGroup
-    Properties:
-      VpcId: !Ref VPC
-      Protocol: HTTP
-      ProtocolVersion: HTTP2
-      Port: 50051
-      TargetType: ip
-      HealthCheckProtocol: HTTP
-      HealthCheckPort: 8080
-      HealthCheckPath: "/health"
+  # TargetGroup:
+  #   Type: AWS::ElasticLoadBalancingV2::TargetGroup
+  #   Properties:
+  #     VpcId: !Ref VPC
+  #     Protocol: HTTP
+  #     ProtocolVersion: HTTP2
+  #     Port: 50051
+  #     TargetType: ip
+  #     HealthCheckProtocol: HTTP
+  #     HealthCheckPort: 8080
+  #     HealthCheckPath: "/health"
 
-  ApplicationLoadBalancerListener:
-    Type: AWS::ElasticLoadBalancingV2::Listener
-    Properties:
-      LoadBalancerArn: !Ref ApplicationLoadBalancer
-      Protocol: HTTPS
-      Port: 50051
-      Certificates:
-        - CertificateArn: !Ref SSLCertificate
-      DefaultActions:
-        - Type: forward
-          TargetGroupArn: !Ref TargetGroup
+  # ApplicationLoadBalancerListener:
+  #   Type: AWS::ElasticLoadBalancingV2::Listener
+  #   Properties:
+  #     LoadBalancerArn: !Ref ApplicationLoadBalancer
+  #     Protocol: HTTPS
+  #     Port: 50051
+  #     Certificates:
+  #       - CertificateArn: !Ref SSLCertificate
+  #     DefaultActions:
+  #       - Type: forward
+  #         TargetGroupArn: !Ref TargetGroup
 
-  SSLCertificate:
-    Type: AWS::CertificateManager::Certificate
-    Properties:
-      DomainName: "andmore.dev"
-      ValidationMethod: DNS
-      DomainValidationOptions:
-        - DomainName: "andmore.dev"
-          HostedZoneId: "Z020200715W60ZNJPKBWE"
+  # SSLCertificate:
+  #   Type: AWS::CertificateManager::Certificate
+  #   Properties:
+  #     DomainName: "andmore.dev"
+  #     ValidationMethod: DNS
+  #     DomainValidationOptions:
+  #       - DomainName: "andmore.dev"
+  #         HostedZoneId: "Z020200715W60ZNJPKBWE"
 
 Outputs:
   VpcId:
@@ -155,14 +155,14 @@ Outputs:
     Export:
       Name: !Sub "${AWS::StackName}-network-PublicSubnet2Id"
 
-  ApplicationLoadBalancerDNS:
-    Description: DNS Name of UDP Network Load Balancer
-    Value: !GetAtt ApplicationLoadBalancer.DNSName
-    Export:
-      Name: !Sub "${AWS::StackName}-network-LoadBalancerDNS"
+  # ApplicationLoadBalancerDNS:
+  #   Description: DNS Name of UDP Network Load Balancer
+  #   Value: !GetAtt ApplicationLoadBalancer.DNSName
+  #   Export:
+  #     Name: !Sub "${AWS::StackName}-network-LoadBalancerDNS"
 
-  TargetGroupArn:
-    Description: UDP Target Group ARN
-    Value: !Ref TargetGroup
-    Export:
-      Name: !Sub "${AWS::StackName}-network-TargetGroupArn"
+  # TargetGroupArn:
+  #   Description: UDP Target Group ARN
+  #   Value: !Ref TargetGroup
+  #   Export:
+  #     Name: !Sub "${AWS::StackName}-network-TargetGroupArn"
