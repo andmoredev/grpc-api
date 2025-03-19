@@ -29,7 +29,7 @@ jobs:
     - name: Delete Stack
       run: |
         sam delete  \
-          --config-file samconfig.yaml \
+          --config-file samconfig.ci.yaml \
           --config-env ecs \
           --no-prompts
 
@@ -74,7 +74,7 @@ jobs:
     - name: Delete Stack
       run: |
         sam delete  \
-          --config-file samconfig.yaml \
+          --config-file samconfig.ci.yaml \
           --config-env ecr \
           --no-prompts
 
@@ -97,6 +97,6 @@ jobs:
     - name: Delete Stack
       run: |
         sam delete  \
-          --config-file samconfig.yaml \
+          --config-file samconfig.ci.yaml \
           --config-env network \
           --no-prompts
