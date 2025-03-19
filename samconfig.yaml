@@ -42,4 +42,4 @@ ecs:
       parameter_overrides:
         - "NetworkStackName=grpc-service-networking"
         - "ECRStackName=grpc-service-ecr"
-        - "DockerImageTag=latest"
+        - "DockerImageTag=$IMAGE_TAG"

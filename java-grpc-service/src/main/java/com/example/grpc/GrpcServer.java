@@ -14,9 +14,9 @@ public class GrpcServer {
                 .addService(ProtoReflectionService.newInstance()) // Ensure reflection is enabled
                 .build();
 
-        System.out.println("Starting gRPC server (v2)...");
+        System.out.println("Starting gRPC server (v3)...");
         server.start();
-        System.out.println("Server started on port 50051 (v2)");
+        System.out.println("Server started on port 50051 (v3)");
 
         server.awaitTermination();
     }
@@ -25,9 +25,9 @@ public class GrpcServer {
     static class GreeterImpl extends GreeterGrpc.GreeterImplBase {
         @Override
         public void sayHello(HelloRequest request, StreamObserver<HelloReply> responseObserver) {
-          System.out.println("Received request (v2): " + request.getName());
+          System.out.println("Received request (v3): " + request.getName());
             HelloReply reply = HelloReply.newBuilder()
-                    .setMessage("Hello, Mr. " + request.getName())
+                    .setMessage("Hello, Mrs. " + request.getName())
                     .build();
             responseObserver.onNext(reply);
             responseObserver.onCompleted();

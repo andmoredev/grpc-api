@@ -160,6 +160,16 @@ jobs:
         role-duration-seconds: 3600
         role-skip-session-tagging: true
 
+    - name: Generate samconfig.yaml file
+      env:
+        IMAGE_TAG: ${{ github.sha }}
+      run: |
+        envsubst < samconfig.yaml > samconfig.yaml
+
+        echo "Generated samconfig.yaml:"
+        cat samconfig.yaml
+
+
     - name: Build and deploy ECS template
       run: |
         sam build  \
