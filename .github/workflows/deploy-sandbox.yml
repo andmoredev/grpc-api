@@ -165,7 +165,7 @@ jobs:
         IMAGE_TAG: ${{ github.sha }}
       run: |
         ls
-        envsubst < samconfig.yaml > samconfig.yaml
+        envsubst < samconfig.ci.yaml > samconfig.yaml
 
         echo "Generated samconfig.yaml:"
         cat samconfig.yaml

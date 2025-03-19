@@ -1,0 +1,45 @@
+version: 0.1
+ecr:
+  build:
+    parameters:
+      cached: 'true'
+      parallel: 'true'
+
+  deploy:
+    parameters:
+      stack_name: grpc-service-ecr
+      s3_prefix: grpc-service-ecr
+      region: us-east-1
+      capabilities: CAPABILITY_IAM
+      parameter_overrides:
+        - "RepositoryName=grpc-service-repo"
+
+network:
+  build:
+    parameters:
+      cached: 'true'
+      parallel: 'true'
+
+  deploy:
+    parameters:
+      stack_name: grpc-service-networking
+      s3_prefix: grpc-service-networking
+      region: us-east-1
+      capabilities: CAPABILITY_IAM
+
+ecs:
+  build:
+    parameters:
+      cached: 'true'
+      parallel: 'true'
+
+  deploy:
+    parameters:
+      stack_name: grpc-service-ecs
+      s3_prefix: grpc-service-ecs
+      region: us-east-1
+      capabilities: CAPABILITY_IAM
+      parameter_overrides:
+        - "NetworkStackName=grpc-service-networking"
+        - "ECRStackName=grpc-service-ecr"
+        - "DockerImageTag=latest"
