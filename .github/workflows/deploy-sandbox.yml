@@ -100,11 +100,23 @@ jobs:
         --output text)
         echo "ECR_REPOSITORY_URL=$ECR_REPOSITORY_URL" >> $GITHUB_ENV
 
-    - name: Build, tag, and push image to Amazon ECR
+    # - name: Build, tag, and push image to Amazon ECR - NODEJS
+    #   env:
+    #     IMAGE_TAG: ${{ github.sha }}
+    #   run: |
+    #     docker build --platform linux/amd64 -t $ECR_REPOSITORY_URL:$IMAGE_TAG ./grpc-service
+    #     docker push $ECR_REPOSITORY_URL:$IMAGE_TAG
+
+    #     # Also tag as latest
+    #     docker tag $ECR_REPOSITORY_URL:$IMAGE_TAG $ECR_REPOSITORY_URL:latest
+
+    #     docker push $ECR_REPOSITORY_URL:latest
+
+    - name: Build, tag, and push image to Amazon ECR - JAVA
       env:
         IMAGE_TAG: ${{ github.sha }}
       run: |
-        docker build --platform linux/amd64 -t $ECR_REPOSITORY_URL:$IMAGE_TAG ./grpc-service
+        docker build --platform linux/amd64 -t $ECR_REPOSITORY_URL:$IMAGE_TAG ./java-grpc-service
         docker push $ECR_REPOSITORY_URL:$IMAGE_TAG
 
         # Also tag as latest
