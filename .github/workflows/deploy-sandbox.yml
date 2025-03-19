@@ -31,12 +31,12 @@ jobs:
       run: |
         sam build  \
           --template template-ecr.yaml \
-          --config-file samconfig.yaml \
+          --config-file samconfig.ci.yaml \
           --config-env ecr
 
         sam deploy \
           --template template-ecr.yaml \
-          --config-file samconfig.yaml \
+          --config-file samconfig.ci.yaml \
           --config-env ecr \
           --s3-bucket ${{ secrets.ARTIFACTS_BUCKET_NAME }} \
           --no-fail-on-empty-changeset \
@@ -61,12 +61,12 @@ jobs:
       run: |
         sam build  \
           --template template-network.yaml \
-          --config-file samconfig.yaml \
+          --config-file samconfig.ci.yaml \
           --config-env network
 
         sam deploy \
           --template template-network.yaml \
-          --config-file samconfig.yaml \
+          --config-file samconfig.ci.yaml \
           --config-env network \
           --s3-bucket ${{ secrets.ARTIFACTS_BUCKET_NAME }} \
           --no-fail-on-empty-changeset \
