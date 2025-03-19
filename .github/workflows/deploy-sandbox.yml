@@ -112,6 +112,23 @@ jobs:
 
     #     docker push $ECR_REPOSITORY_URL:latest
 
+    #### JAVA ####
+    - name: Set up JDK 21
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'temurin'  # Eclipse Temurin (Recommended)
+        java-version: '21'
+
+    - name: Cache Maven packages
+      uses: actions/cache@v3
+      with:
+        path: ~/.m2
+        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+        restore-keys: ${{ runner.os }}-maven
+
+    - name: Build Java gRPC Server with Maven
+      run: mvn clean package
+
     - name: Build, tag, and push image to Amazon ECR - JAVA
       env:
         IMAGE_TAG: ${{ github.sha }}
@@ -123,7 +140,8 @@ jobs:
         docker tag $ECR_REPOSITORY_URL:$IMAGE_TAG $ECR_REPOSITORY_URL:latest
 
         docker push $ECR_REPOSITORY_URL:latest
-
+    #### JAVA ####
+    
   deploy-ecs:
     needs: [build-and-publish-image]
     runs-on: ubuntu-latest
