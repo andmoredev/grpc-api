@@ -38,8 +38,8 @@ Resources:
         - IpProtocol: tcp
           FromPort: 50051
           ToPort: 50051
-          SourceSecurityGroupId: !Ref ALBSecurityGroup
-          # CidrIp: 0.0.0.0/0 # This is instead of sourcesecuritygroupid
+          # SourceSecurityGroupId: !Ref ALBSecurityGroup
+          CidrIp: 0.0.0.0/0 # This is instead of sourcesecuritygroupid
       SecurityGroupEgress:
         - IpProtocol: "-1"
           CidrIp: 0.0.0.0/0
