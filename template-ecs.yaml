@@ -81,12 +81,12 @@ Resources:
                 Fn::Sub: "${NetworkStackName}-network-PublicSubnet1Id"
             - Fn::ImportValue:
                 Fn::Sub: "${NetworkStackName}-network-PublicSubnet2Id"
-      # LoadBalancers:
-      #   - ContainerName: ecs-grpc-container
-      #     ContainerPort: 50051
-      #     TargetGroupArn:
-      #       Fn::ImportValue:
-      #         Fn::Sub: "${NetworkStackName}-network-TargetGroupArn"
+      LoadBalancers:
+        - ContainerName: ecs-grpc-container
+          ContainerPort: 50051
+          TargetGroupArn:
+            Fn::ImportValue:
+              Fn::Sub: "${NetworkStackName}-network-TargetGroupArn"
 
 
   ECSTaskExecutionRole:
