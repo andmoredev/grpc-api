@@ -81,7 +81,7 @@ Resources:
           AssignPublicIp: ENABLED
           SecurityGroups:
             - Fn::ImportValue:
-                Fn::Sub: "${NetworkStackName}-network-ECSSecurityGroupId"
+                Fn::Sub: "${NetworkStackName}-network-SecurityGroupId"
           Subnets:
             - Fn::ImportValue:
                 Fn::Sub: "${NetworkStackName}-network-PublicSubnet1Id"

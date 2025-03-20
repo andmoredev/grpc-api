@@ -156,7 +156,7 @@ Outputs:
     Description: Security Group ID for ECS Tasks
     Value: !Ref ECSSecurityGroup
     Export:
-      Name: !Sub "${AWS::StackName}-network-ECSSecurityGroupId"
+      Name: !Sub "${AWS::StackName}-network-SecurityGroupId"
 
   PublicSubnet1Id:
     Description: Public Subnet 1 ID
