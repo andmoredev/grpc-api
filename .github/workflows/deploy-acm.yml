@@ -1,4 +1,4 @@
-name: Sandbox Deployment
+name: Deploy ACM Certificate
 
 on:
   push:
@@ -12,7 +12,7 @@ concurrency:
   group: ${{ github.workflow }}
 
 jobs:
-  deploy-ecr:
+  deploy-acm:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code
