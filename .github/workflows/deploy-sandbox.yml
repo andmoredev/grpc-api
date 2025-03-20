@@ -100,48 +100,48 @@ jobs:
         --output text)
         echo "ECR_REPOSITORY_URL=$ECR_REPOSITORY_URL" >> $GITHUB_ENV
 
-    # - name: Build, tag, and push image to Amazon ECR - NODEJS
-    #   env:
-    #     IMAGE_TAG: ${{ github.sha }}
-    #   run: |
-    #     docker build --platform linux/amd64 -t $ECR_REPOSITORY_URL:$IMAGE_TAG ./grpc-service
-    #     docker push $ECR_REPOSITORY_URL:$IMAGE_TAG
-
-    #     # Also tag as latest
-    #     docker tag $ECR_REPOSITORY_URL:$IMAGE_TAG $ECR_REPOSITORY_URL:latest
-
-    #     docker push $ECR_REPOSITORY_URL:latest
-
-    #### JAVA ####
-    - name: Set up JDK 21
-      uses: actions/setup-java@v3
-      with:
-        distribution: 'temurin'  # Eclipse Temurin (Recommended)
-        java-version: '21'
-
-    - name: Cache Maven packages
-      uses: actions/cache@v3
-      with:
-        path: ~/.m2
-        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-        restore-keys: ${{ runner.os }}-maven
-
-    - name: Build Java gRPC Server with Maven
-      working-directory: java-grpc-service
-      run: mvn clean package
-
-    - name: Build, tag, and push image to Amazon ECR - JAVA
-      working-directory: java-grpc-service
+    - name: Build, tag, and push image to Amazon ECR - NODEJS
       env:
         IMAGE_TAG: ${{ github.sha }}
       run: |
-        docker build --platform linux/amd64 -t $ECR_REPOSITORY_URL:$IMAGE_TAG .
+        docker build --platform linux/amd64 -t $ECR_REPOSITORY_URL:$IMAGE_TAG ./grpc-service
         docker push $ECR_REPOSITORY_URL:$IMAGE_TAG
 
         # Also tag as latest
         docker tag $ECR_REPOSITORY_URL:$IMAGE_TAG $ECR_REPOSITORY_URL:latest
 
         docker push $ECR_REPOSITORY_URL:latest
+
+    #### JAVA ####
+    # - name: Set up JDK 21
+    #   uses: actions/setup-java@v3
+    #   with:
+    #     distribution: 'temurin'  # Eclipse Temurin (Recommended)
+    #     java-version: '21'
+
+    # - name: Cache Maven packages
+    #   uses: actions/cache@v3
+    #   with:
+    #     path: ~/.m2
+    #     key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+    #     restore-keys: ${{ runner.os }}-maven
+
+    # - name: Build Java gRPC Server with Maven
+    #   working-directory: java-grpc-service
+    #   run: mvn clean package
+
+    # - name: Build, tag, and push image to Amazon ECR - JAVA
+    #   working-directory: java-grpc-service
+    #   env:
+    #     IMAGE_TAG: ${{ github.sha }}
+    #   run: |
+    #     docker build --platform linux/amd64 -t $ECR_REPOSITORY_URL:$IMAGE_TAG .
+    #     docker push $ECR_REPOSITORY_URL:$IMAGE_TAG
+
+    #     # Also tag as latest
+    #     docker tag $ECR_REPOSITORY_URL:$IMAGE_TAG $ECR_REPOSITORY_URL:latest
+
+    #     docker push $ECR_REPOSITORY_URL:latest
     #### JAVA ####
 
   deploy-ecs:
