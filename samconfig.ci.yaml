@@ -26,6 +26,8 @@ network:
       s3_prefix: grpc-service-networking
       region: us-east-1
       capabilities: CAPABILITY_IAM
+      parameter_overrides:
+        - "CertificateDomainName=andmore.dev"
 
 ecs:
   build:
