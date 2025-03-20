@@ -1,7 +1,6 @@
 name: Deploy ACM Certificate
 
 on:
-  push:
   workflow_dispatch:
 
 permissions:
@@ -27,7 +26,7 @@ jobs:
         role-duration-seconds: 3600
         role-skip-session-tagging: true
 
-    - name: Build and deploy ECR template
+    - name: Build and deploy ACM template
       run: |
         sam build  \
           --template template-acm.yaml \
