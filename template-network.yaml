@@ -115,26 +115,6 @@ Resources:
       VpcId: !Ref VPC
       Port: 50051
       Protocol: HTTPS
-      ProtocolVersion: GRPC
-      TargetType: ip
-      HealthCheckEnabled: true
-      HealthCheckPath: '/health'
-      HealthCheckIntervalSeconds: 30
-      HealthCheckTimeoutSeconds: 10
-      HealthyThresholdCount: 3
-      UnhealthyThresholdCount: 3
-      HealthCheckPort: traffic-port
-      HealthCheckProtocol: HTTP
-      TargetGroupAttributes:
-        - Key: deregistration_delay.timeout_seconds
-          Value: '30'
-
-  TargetGroup2:
-    Type: AWS::ElasticLoadBalancingV2::TargetGroup
-    Properties:
-      VpcId: !Ref VPC
-      Port: 50051
-      Protocol: HTTPS
       ProtocolVersion: HTTP2
       TargetType: ip
       HealthCheckEnabled: true
@@ -197,6 +177,6 @@ Outputs:
 
   TargetGroupArn:
     Description: ARN of the Target Group
-    Value: !Ref TargetGroup2
+    Value: !Ref TargetGroup
     Export:
       Name: !Sub "${AWS::StackName}-network-TargetGroupArn"
