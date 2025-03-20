@@ -115,7 +115,7 @@ Resources:
       VpcId: !Ref VPC
       Port: 50051
       Protocol: HTTPS
-      ProtocolVersion: GRPC
+      ProtocolVersion: HTTP2
       TargetType: ip
       HealthCheckEnabled: true
       HealthCheckPath: '/health'
