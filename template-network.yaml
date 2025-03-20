@@ -114,7 +114,8 @@ Resources:
     Properties:
       VpcId: !Ref VPC
       Port: 50051
-      Protocol: TCP
+      Protocol: HTTPS
+      ProtocolVersion: GRPC
       TargetType: ip
       HealthCheckEnabled: true
       HealthCheckPath: '/health'
@@ -133,7 +134,7 @@ Resources:
     Properties:
       LoadBalancerArn: !Ref ApplicationLoadBalancer
       Port: 50051
-      Protocol: TCP
+      Protocol: HTTPS
       SslPolicy: ELBSecurityPolicy-TLS-1-2-2017-01
       Certificates:
         - CertificateArn:
