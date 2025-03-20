@@ -27,7 +27,7 @@ network:
       region: us-east-1
       capabilities: CAPABILITY_IAM
       parameter_overrides:
-        - "CertificateDomainName=andmore.dev"
+        - "CertificateDomainName=grpc-api.andmore.dev"
 
 ecs:
   build:
