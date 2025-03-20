@@ -142,8 +142,6 @@ Resources:
       DefaultActions:
         - Type: forward
           TargetGroupArn: !Ref TargetGroup
-        - Type: forward
-          TargetGroupArn: !Ref TargetGroup
 
 Outputs:
   VpcId:
