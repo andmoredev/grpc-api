@@ -38,8 +38,8 @@ Resources:
         - IpProtocol: tcp
           FromPort: 50051
           ToPort: 50051
-          # SourceSecurityGroupId: !Ref ALBSecurityGroup
-          CidrIp: 0.0.0.0/0 # This is instead of sourcesecuritygroupid
+          SourceSecurityGroupId: !Ref ALBSecurityGroup
+          # CidrIp: 0.0.0.0/0 # This is instead of sourcesecuritygroupid
       SecurityGroupEgress:
         - IpProtocol: "-1"
           CidrIp: 0.0.0.0/0
@@ -167,14 +167,14 @@ Outputs:
     Export:
       Name: !Sub "${AWS::StackName}-network-PublicSubnet2Id"
 
-  # LoadBalancerDNS:
-  #   Description: DNS name of the load balancer
-  #   Value: !GetAtt ApplicationLoadBalancer.DNSName
-  #   Export:
-  #     Name: !Sub "${AWS::StackName}-network-LoadBalancerDNS"
+  LoadBalancerDNS:
+    Description: DNS name of the load balancer
+    Value: !GetAtt ApplicationLoadBalancer.DNSName
+    Export:
+      Name: !Sub "${AWS::StackName}-network-LoadBalancerDNS"
 
-  # TargetGroupArn:
-  #   Description: ARN of the Target Group
-  #   Value: !Ref TargetGroup
-  #   Export:
-  #     Name: !Sub "${AWS::StackName}-network-TargetGroupArn"
+  TargetGroupArn:
+    Description: ARN of the Target Group
+    Value: !Ref TargetGroup
+    Export:
+      Name: !Sub "${AWS::StackName}-network-TargetGroupArn"
