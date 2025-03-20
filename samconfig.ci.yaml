@@ -26,6 +26,19 @@ network:
       s3_prefix: grpc-service-networking
       region: us-east-1
       capabilities: CAPABILITY_IAM
+
+acm:
+  build:
+    parameters:
+      cached: 'true'
+      parallel: 'true'
+
+  deploy:
+    parameters:
+      stack_name: grpc-service-acm
+      s3_prefix: grpc-service-acm
+      region: us-east-1
+      capabilities: CAPABILITY_IAM
       parameter_overrides:
         - "CertificateDomainName=grpc-api.andmore.dev"
 

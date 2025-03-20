@@ -2,10 +2,10 @@ AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: Network infrastructure template for Hello World UDP application
 
-Parameters:
-  CertificateDomainName:
-    Type: String
-    Description: Domain name for the SSL/TLS certificate
+# Parameters:
+#   CertificateDomainName:
+#     Type: String
+#     Description: Domain name for the SSL/TLS certificate
 
 Resources:
   VPC:
@@ -15,19 +15,19 @@ Resources:
       EnableDnsHostnames: true
       EnableDnsSupport: true
 
-  ALBSecurityGroup:
-    Type: AWS::EC2::SecurityGroup
-    Properties:
-      GroupDescription: Security group for Application Load Balancer
-      VpcId: !Ref VPC
-      SecurityGroupIngress:
-        - IpProtocol: tcp
-          FromPort: 50051
-          ToPort: 50051
-          CidrIp: 0.0.0.0/0
-      SecurityGroupEgress:
-        - IpProtocol: "-1"
-          CidrIp: 0.0.0.0/0
+  # ALBSecurityGroup:
+  #   Type: AWS::EC2::SecurityGroup
+  #   Properties:
+  #     GroupDescription: Security group for Application Load Balancer
+  #     VpcId: !Ref VPC
+  #     SecurityGroupIngress:
+  #       - IpProtocol: tcp
+  #         FromPort: 50051
+  #         ToPort: 50051
+  #         CidrIp: 0.0.0.0/0
+  #     SecurityGroupEgress:
+  #       - IpProtocol: "-1"
+  #         CidrIp: 0.0.0.0/0
 
   ECSSecurityGroup:
     Type: AWS::EC2::SecurityGroup
@@ -38,7 +38,8 @@ Resources:
         - IpProtocol: tcp
           FromPort: 50051
           ToPort: 50051
-          SourceSecurityGroupId: !Ref ALBSecurityGroup
+          # SourceSecurityGroupId: !Ref ALBSecurityGroup
+          CidrIp: 0.0.0.0/0 # This is instead of sourcesecuritygroupid
       SecurityGroupEgress:
         - IpProtocol: "-1"
           CidrIp: 0.0.0.0/0
@@ -93,57 +94,57 @@ Resources:
       SubnetId: !Ref PublicSubnet2
       RouteTableId: !Ref PublicRouteTable
 
-  ApplicationLoadBalancer:
-    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
-    Properties:
-      Name: grpc-alb
-      Subnets:
-        - !Ref PublicSubnet1
-        - !Ref PublicSubnet2
-      SecurityGroups:
-        - !Ref ALBSecurityGroup
-      Scheme: internet-facing
-      Type: application
-      LoadBalancerAttributes:
-        - Key: idle_timeout.timeout_seconds
-          Value: '3600'
+  # ApplicationLoadBalancer:
+  #   Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+  #   Properties:
+  #     Name: grpc-alb
+  #     Subnets:
+  #       - !Ref PublicSubnet1
+  #       - !Ref PublicSubnet2
+  #     SecurityGroups:
+  #       - !Ref ALBSecurityGroup
+  #     Scheme: internet-facing
+  #     Type: application
+  #     LoadBalancerAttributes:
+  #       - Key: idle_timeout.timeout_seconds
+  #         Value: '3600'
 
-  TargetGroup:
-    Type: AWS::ElasticLoadBalancingV2::TargetGroup
-    Properties:
-      VpcId: !Ref VPC
-      Port: 50051
-      Protocol: HTTPS
-      TargetType: ip
-      HealthCheckEnabled: true
-      HealthCheckPath: '/grpc.health.v1.Health/Check'
-      HealthCheckIntervalSeconds: 30
-      HealthCheckTimeoutSeconds: 5
-      HealthyThresholdCount: 2
-      UnhealthyThresholdCount: 2
-      HealthCheckPort: 50051
-      TargetGroupAttributes:
-        - Key: deregistration_delay.timeout_seconds
-          Value: '30'
+  # TargetGroup:
+  #   Type: AWS::ElasticLoadBalancingV2::TargetGroup
+  #   Properties:
+  #     VpcId: !Ref VPC
+  #     Port: 50051
+  #     Protocol: HTTPS
+  #     TargetType: ip
+  #     HealthCheckEnabled: true
+  #     HealthCheckPath: '/grpc.health.v1.Health/Check'
+  #     HealthCheckIntervalSeconds: 30
+  #     HealthCheckTimeoutSeconds: 5
+  #     HealthyThresholdCount: 2
+  #     UnhealthyThresholdCount: 2
+  #     HealthCheckPort: 50051
+  #     TargetGroupAttributes:
+  #       - Key: deregistration_delay.timeout_seconds
+  #         Value: '30'
 
-  LoadBalancerSSLCertificate:
-    Type: AWS::CertificateManager::Certificate
-    Properties:
-      DomainName: !Ref CertificateDomainName
-      ValidationMethod: DNS
+  # LoadBalancerSSLCertificate:
+  #   Type: AWS::CertificateManager::Certificate
+  #   Properties:
+  #     DomainName: !Ref CertificateDomainName
+  #     ValidationMethod: DNS
 
-  Listener:
-    Type: AWS::ElasticLoadBalancingV2::Listener
-    Properties:
-      LoadBalancerArn: !Ref ApplicationLoadBalancer
-      Port: 50051
-      Protocol: HTTPS
-      SslPolicy: ELBSecurityPolicy-TLS-1-2-2017-01
-      Certificates:
-        - CertificateArn: !Ref LoadBalancerSSLCertificate
-      DefaultActions:
-        - Type: forward
-          TargetGroupArn: !Ref TargetGroup
+  # Listener:
+  #   Type: AWS::ElasticLoadBalancingV2::Listener
+  #   Properties:
+  #     LoadBalancerArn: !Ref ApplicationLoadBalancer
+  #     Port: 50051
+  #     Protocol: HTTPS
+  #     SslPolicy: ELBSecurityPolicy-TLS-1-2-2017-01
+  #     Certificates:
+  #       - CertificateArn: !Ref LoadBalancerSSLCertificate
+  #     DefaultActions:
+  #       - Type: forward
+  #         TargetGroupArn: !Ref TargetGroup
 
 Outputs:
   VpcId:
@@ -170,14 +171,14 @@ Outputs:
     Export:
       Name: !Sub "${AWS::StackName}-network-PublicSubnet2Id"
 
-  LoadBalancerDNS:
-    Description: DNS name of the load balancer
-    Value: !GetAtt ApplicationLoadBalancer.DNSName
-    Export:
-      Name: !Sub "${AWS::StackName}-network-LoadBalancerDNS"
+  # LoadBalancerDNS:
+  #   Description: DNS name of the load balancer
+  #   Value: !GetAtt ApplicationLoadBalancer.DNSName
+  #   Export:
+  #     Name: !Sub "${AWS::StackName}-network-LoadBalancerDNS"
 
-  TargetGroupArn:
-    Description: ARN of the Target Group
-    Value: !Ref TargetGroup
-    Export:
-      Name: !Sub "${AWS::StackName}-network-TargetGroupArn"
+  # TargetGroupArn:
+  #   Description: ARN of the Target Group
+  #   Value: !Ref TargetGroup
+  #   Export:
+  #     Name: !Sub "${AWS::StackName}-network-TargetGroupArn"

@@ -1,0 +1,22 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Network infrastructure template for Hello World UDP application
+
+Parameters:
+  CertificateDomainName:
+    Type: String
+    Description: Domain name for the SSL/TLS certificate
+
+Resources:
+  LoadBalancerSSLCertificate:
+    Type: AWS::CertificateManager::Certificate
+    Properties:
+      DomainName: !Ref CertificateDomainName
+      ValidationMethod: DNS
+
+Outputs:
+  SSLCertificateARN:
+    Value: !Ref LoadBalancerSSLCertificate
+    Description: ARN of the SSL/TLS certificate for the load balancer
+    Export:
+      Name: !Sub "${AWS::StackName}-acm-CertificateARN"
