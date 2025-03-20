@@ -114,7 +114,7 @@ Resources:
     Properties:
       VpcId: !Ref VPC
       Port: 50051
-      Protocol: HTTP2
+      Protocol: TCP
       TargetType: ip
       HealthCheckEnabled: true
       HealthCheckPath: '/health'
