@@ -2,6 +2,7 @@ const grpc = require('@grpc/grpc-js');
 const protoLoader = require('@grpc/proto-loader');
 const path = require('path');
 const http = require('http');
+const { ReflectionService } = require('@grpc/reflection');
 
 // Load proto file
 const PROTO_PATH = path.resolve(__dirname, './proto/hello.proto');
@@ -13,14 +14,6 @@ const packageDefinition = protoLoader.loadSync(PROTO_PATH, {
   oneofs: true
 });
 const helloProto = grpc.loadPackageDefinition(packageDefinition).hello;
-
-// Load gRPC Reflection service
-const reflectionProto = grpc.loadPackageDefinition(
-  protoLoader.loadSync([
-    path.join(__dirname, './proto/grpc/reflection/v1alpha/reflection.proto')
-  ])
-);
-const reflectionService = reflectionProto.grpc.reflection.v1alpha.ServerReflectionService;
 
 // gRPC service implementation
 function sayHello(call, callback) {
@@ -37,16 +30,10 @@ function checkHealth(call, callback) {
 // Create gRPC server
 function startGrpcServer() {
   const server = new grpc.Server();
-
-  // Register Greeter service
   server.addService(helloProto.Greeter.service, { SayHello: sayHello });
 
-  // Register Reflection service
-  server.addService(reflectionService, {
-    ServerReflectionInfo: (call) => {
-      console.log("Reflection request received");
-    }
-  });
+  const reflection = new ReflectionService(packageDefinition);
+  reflection.addToServer(server);
 
   const PORT = process.env.PORT || 50051;
   server.bindAsync(`0.0.0.0:${PORT}`, grpc.ServerCredentials.createInsecure(), (err, port) => {
@@ -54,7 +41,7 @@ function startGrpcServer() {
       console.error('❌ Failed to start gRPC server:', err);
       process.exit(1);
     }
-    console.log(`🚀 gRPC Server running on port ${port} with Reflection Enabled`);
+    console.log(`🚀 gRPC Server running on port ${port}`);
     server.start();
   });
 }
