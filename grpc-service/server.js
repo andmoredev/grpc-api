@@ -2,6 +2,7 @@ const grpc = require('@grpc/grpc-js');
 const protoLoader = require('@grpc/proto-loader');
 const path = require('path');
 const http = require('http');
+const { ServerReflection } = require("@grpc/reflection");
 
 // Load proto file
 const PROTO_PATH = path.resolve(__dirname, './proto/hello.proto');
@@ -30,6 +31,8 @@ function checkHealth(call, callback) {
 function startGrpcServer() {
   const server = new grpc.Server();
   server.addService(helloProto.Greeter.service, { SayHello: sayHello });
+
+  ServerReflection.register(server);
 
   const PORT = process.env.PORT || 50051;
   server.bindAsync(`0.0.0.0:${PORT}`, grpc.ServerCredentials.createInsecure(), (err, port) => {
