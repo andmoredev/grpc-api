@@ -197,6 +197,6 @@ Outputs:
 
   TargetGroupArn:
     Description: ARN of the Target Group
-    Value: !Ref TargetGroup
+    Value: !Ref TargetGroup2
     Export:
       Name: !Sub "${AWS::StackName}-network-TargetGroupArn"
