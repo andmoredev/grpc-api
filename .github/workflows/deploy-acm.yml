@@ -1,6 +1,7 @@
 name: Sandbox Deployment
 
 on:
+  push:
   workflow_dispatch:
 
 permissions:
