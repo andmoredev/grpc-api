@@ -68,25 +68,29 @@ Resources:
       ServiceName: ecs-service
       Cluster: !Ref ECSCluster
       TaskDefinition: !Ref ECSTaskDefinition
-      DesiredCount: 1
+      DesiredCount: 2
       LaunchType: FARGATE
-      # LoadBalancers:
-      #   - ContainerName: ecs-grpc-container
-      #     ContainerPort: 50051
-      #     TargetGroupArn:
-      #       Fn::ImportValue:
-      #         Fn::Sub: "${NetworkStackName}-network-TargetGroupArn"
+      LoadBalancers:
+        - ContainerName: ecs-grpc-container
+          ContainerPort: 50051
+          TargetGroupArn:
+            Fn::ImportValue:
+              Fn::Sub: "${NetworkStackName}-network-TargetGroupArn"
       NetworkConfiguration:
         AwsvpcConfiguration:
           AssignPublicIp: ENABLED
           SecurityGroups:
             - Fn::ImportValue:
-                Fn::Sub: "${NetworkStackName}-network-SecurityGroupId"
+                Fn::Sub: "${NetworkStackName}-network-ECSSecurityGroupId"
           Subnets:
             - Fn::ImportValue:
                 Fn::Sub: "${NetworkStackName}-network-PublicSubnet1Id"
             - Fn::ImportValue:
                 Fn::Sub: "${NetworkStackName}-network-PublicSubnet2Id"
+      DeploymentConfiguration:
+        MaximumPercent: 200
+        MinimumHealthyPercent: 100
+
 
   ECSTaskExecutionRole:
     Type: AWS::IAM::Role
@@ -112,10 +116,3 @@ Resources:
                   - ecr:GetDownloadUrlForLayer
                   - ecr:BatchGetImage
                 Resource: '*'
-
-# Outputs:
-#   ServiceUrl:
-#     Description: URL of the service
-#     Value:
-#       Fn::ImportValue:
-#         Fn::Sub: "${NetworkStackName}-network-LoadBalancerDNS"

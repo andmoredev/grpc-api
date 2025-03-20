@@ -10,8 +10,9 @@ public class GrpcServer {
 
     public static void main(String[] args) throws IOException, InterruptedException {
         Server server = ServerBuilder.forPort(50051)
-                .addService(new GreeterImpl()) // Make sure this is added
-                .addService(ProtoReflectionService.newInstance()) // Ensure reflection is enabled
+                .addService(new HealthCheckImpl())
+                .addService(new GreeterImpl())
+                .addService(ProtoReflectionService.newInstance())
                 .build();
 
         System.out.println("Starting gRPC server (v3)...");
