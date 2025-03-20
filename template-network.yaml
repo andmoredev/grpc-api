@@ -114,15 +114,16 @@ Resources:
     Properties:
       VpcId: !Ref VPC
       Port: 50051
-      Protocol: HTTPS
+      Protocol: HTTP2
       TargetType: ip
       HealthCheckEnabled: true
-      HealthCheckPath: '/grpc.health.v1.Health/Check'
+      HealthCheckPath: '/health'
       HealthCheckIntervalSeconds: 30
-      HealthCheckTimeoutSeconds: 5
-      HealthyThresholdCount: 2
-      UnhealthyThresholdCount: 2
-      HealthCheckPort: 50051
+      HealthCheckTimeoutSeconds: 10
+      HealthyThresholdCount: 3
+      UnhealthyThresholdCount: 3
+      HealthCheckPort: traffic-port
+      HealthCheckProtocol: HTTP
       TargetGroupAttributes:
         - Key: deregistration_delay.timeout_seconds
           Value: '30'
@@ -139,6 +140,8 @@ Resources:
             Fn::ImportValue:
               Fn::Sub: "${ACMStackName}-acm-CertificateARN"
       DefaultActions:
+        - Type: forward
+          TargetGroupArn: !Ref TargetGroup
         - Type: forward
           TargetGroupArn: !Ref TargetGroup
 
